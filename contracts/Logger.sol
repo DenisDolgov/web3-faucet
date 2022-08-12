@@ -2,5 +2,5 @@
 pragma solidity >=0.8.0 <0.9.0;
 
 abstract contract Logger {
-    function emitLog() public pure virtual returns(bytes32);
+  function emitLog() public pure virtual returns (bytes32);
 }
