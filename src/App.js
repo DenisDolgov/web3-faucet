@@ -40,13 +40,22 @@ function App() {
     <>
       <div className="faucet-wrapper">
         <div className="faucet">
-          <strong>Account:</strong>
-          <h1>{account ? account : 'not connected'}</h1>
-          <div className="balance-view is-size-2">
+          <div className="is-flex is-align-items-center">
+            <strong className="mr-2">Account:</strong>
+            {
+              account
+                ? <span>{account}</span>
+                : <button
+                    onClick={() => web3Api.provider.request({ method: 'eth_requestAccounts' })}
+                    className="button is-info mr-2"
+                  >Connect Wallet</button>
+            }
+          </div>
+          <div className="balance-view is-size-2 my-4">
             Current balance: <strong>10</strong> ETH
           </div>
-          <button className="button mr-2">Donate</button>
-          <button className="button">Withdraw</button>
+          <button className="button is-link mr-2">Donate</button>
+          <button className="button is-primary">Withdraw</button>
         </div>
       </div>
     </>
