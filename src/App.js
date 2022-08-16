@@ -9,6 +9,7 @@ function App() {
     provider: null,
     web3: null,
     contract: null,
+    isProviderLoaded: false,
   });
   const [account, setAccount] = useState(null);
   const [balance, setBalance] = useState(null);
@@ -33,16 +34,22 @@ function App() {
   useEffect(() => {
     const loadProvider = async () => {
       const provider = await detectEthereumProvider();
-      const contract = await loadContract('Faucet', provider);
 
       if (provider) {
         setListeners(provider);
+
+        const contract = await loadContract('Faucet', provider);
         setWeb3Api({
           web3: new Web3(provider),
+          isProviderLoaded: true,
           provider,
           contract,
         });
       } else {
+        setWeb3Api({
+          ...web3Api,
+          isProviderLoaded: true,
+        })
         console.error('Please, install Metamask.');
       }
     };
@@ -91,17 +98,32 @@ function App() {
     <>
       <div className="faucet-wrapper">
         <div className="faucet">
-          <div className="is-flex is-align-items-center">
-            <strong className="mr-2">Account:</strong>
-            {
-              account
-                ? <span>{account}</span>
-                : <button
-                  onClick={() => web3Api.provider.request({method: 'eth_requestAccounts'})}
-                  className="button is-info mr-2"
-                >Connect Wallet</button>
-            }
-          </div>
+          {
+            web3Api.isProviderLoaded
+              ? (<div className="is-flex is-align-items-center">
+                  <strong className="mr-2">Account:</strong>
+                  {
+                    account
+                      ? <span>{account}</span>
+                      : !web3Api.provider
+                        ? (
+                          <>
+                            <div className="notification is-size-6 is-rounded is-warning">
+                              Wallet is not detected!{' '}
+                              <a target="_blank" href="https://metamask.io/download/">Install Metamask</a>
+                            </div>
+                          </>
+                        )
+                        : (
+                          <button
+                            onClick={() => web3Api.provider.request({method: 'eth_requestAccounts'})}
+                            className="button is-info mr-2"
+                          >Connect Wallet</button>
+                        )
+                  }
+                </div>)
+              : (<span>Looking for Web3...</span>)
+          }
           <div className="balance-view is-size-2 my-4">
             Current balance: <strong>{balance}</strong> ETH
           </div>
