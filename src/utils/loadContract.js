@@ -6,5 +6,13 @@ export const loadContract = async (name, provider) => {
   const _contract = contract(Artifact);
   _contract.setProvider(provider);
 
-  return _contract.deployed();
+  let deployedContract = null;
+
+  try {
+    deployedContract = await _contract.deployed();
+  } catch {
+    console.error('You are connect to the wrong network!');
+  }
+
+  return deployedContract;
 }
