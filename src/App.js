@@ -19,6 +19,7 @@ function App() {
 
   const setListeners = provider => {
     provider.on('accountsChanged', accounts => setAccount(accounts[0]));
+    provider.on('chainChanged', _ => window.location.reload());
     provider._jsonRpcConnection.events.on('notification', payload => {
       const { method, params } = payload;
 
